@@ -117,7 +117,7 @@ int8_t get_auxin_detect_gpio(void);
  * @return  -1      non-existent
  *          Others  gpio number
  */
-int8_t get_headphone_detect_gpio(void);
+// int8_t get_headphone_detect_gpio(void);
 
 /**
  * @brief  Get the gpio number for PA enable
@@ -213,7 +213,7 @@ int8_t get_reset_board_gpio(void);
  * @return -1       non-existent
  *         Others   gpio number
  */
-int8_t get_green_led_gpio(void);
+//  int8_t get_green_led_gpio(void);
 
 /**
  * @brief Get green led gpio number

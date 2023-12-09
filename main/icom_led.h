@@ -37,9 +37,9 @@ void icom_led_OPEN_reset(void);
 /**
  * @brief Initialize led peripheral and display service
  *
- * @return The audio display service handle
+ * @return The display service handle
  */
-//display_service_handle_t icom_led_init(void);
+display_service_handle_t icom_led_init(void);
 
 #ifdef __cplusplus
 }

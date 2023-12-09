@@ -1,4 +1,8 @@
+/* 
 
+    SIP Intercom system
+
+*/
 
 #include <stdio.h>
 #include "esp_log.h"
@@ -7,18 +11,14 @@
 #include "driver/gpio.h"
 #include "esp_log.h"
 
+#include "board_pins_def.h"
+
 #include "display_service.h"
 #include "led_indicator.h"
 
 #include "icom_led.h"
 
 static const char *TAG = "ICOM_LED";
-
-#define ICOM_LED_WIFI   GPIO_NUM_2
-#define ICOM_LED_VOIP   GPIO_NUM_22
-#define ICOM_LED_CALL   GPIO_NUM_19
-#define ICOM_LED_ANSW   GPIO_NUM_4
-#define ICOM_LED_OPEN   GPIO_NUM_15
 
 
 void icom_led_config()
@@ -42,13 +42,12 @@ void icom_led_config()
     gpio_reset_pin(ICOM_LED_OPEN);
     gpio_set_direction(ICOM_LED_OPEN, GPIO_MODE_OUTPUT);
 
-/*
-    gpio_set_level(ICOM_LED_WIFI, true);
-    gpio_set_level(ICOM_LED_VOIP, true);
-    gpio_set_level(ICOM_LED_CALL, true);
-    gpio_set_level(ICOM_LED_ANSW, true);
-    gpio_set_level(ICOM_LED_OPEN, true);
-*/
+    gpio_set_level(ICOM_LED_WIFI, false);
+    gpio_set_level(ICOM_LED_VOIP, false);
+    gpio_set_level(ICOM_LED_CALL, false);
+    gpio_set_level(ICOM_LED_ANSW, false);
+    gpio_set_level(ICOM_LED_OPEN, false);
+
 }
 
 void icom_led_WIFI_set()    {   gpio_set_level(ICOM_LED_WIFI, true);    }
@@ -120,8 +119,7 @@ void blink_test_task()
 }
 */
 
-//static const char *TAG = "icom_led";
-/*
+
 #define LED_GPIO_22 GPIO_NUM_22
 
 display_service_handle_t icom_led_init(void)
@@ -145,4 +143,3 @@ display_service_handle_t icom_led_init(void)
 
     return display_service_create(&display);
 }
-*/

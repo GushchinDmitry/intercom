@@ -62,6 +62,7 @@ audio_hal_handle_t audio_board_codec_init(void)
     return codec_hal;
 }
 
+/*
 display_service_handle_t audio_board_led_init(void)
 {
     led_indicator_handle_t led = led_indicator_init((gpio_num_t)get_green_led_gpio());
@@ -83,6 +84,7 @@ display_service_handle_t audio_board_led_init(void)
 
     return display_service_create(&display);
 }
+*/
 
 esp_err_t audio_board_key_init(esp_periph_set_handle_t set)
 {

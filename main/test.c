@@ -7,16 +7,13 @@
 #include "driver/gpio.h"
 #include "esp_log.h"
 
+
+#include "board_pins_def.h"
 #include "test.h"
+
 
 static const char *TAG = "test";
 
-
-#define ICOM_LED_WIFI   GPIO_NUM_2
-#define ICOM_LED_VOIP   GPIO_NUM_22
-#define ICOM_LED_CALL   GPIO_NUM_19
-#define ICOM_LED_ANSW   GPIO_NUM_4
-#define ICOM_LED_OPEN   GPIO_NUM_15
 
 #define ICOM_IN_CALL    GPIO_NUM_33
 
@@ -50,7 +47,7 @@ void test()
 
 
 
-
+/*
         if (gpio_get_level(ICOM_IN_CALL))
         {
             // обратная логика: если true, то нет вызова
@@ -61,7 +58,7 @@ void test()
             ESP_LOGI(TAG, "Input CALL !!!");
             gpio_set_level(ICOM_LED_CALL, true);
         }
-
+*/
         vTaskDelay(CONFIG_BLINK_PERIOD / portTICK_PERIOD_MS);
     }
     

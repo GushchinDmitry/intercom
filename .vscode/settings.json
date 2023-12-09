@@ -78,6 +78,9 @@
         "icom_ctrl.h": "c",
         "blink_test.h": "c",
         "led_indicator.h": "c",
-        "periph_service.h": "c"
+        "periph_service.h": "c",
+        "chrono": "c",
+        "ratio": "c",
+        "*.inc": "c"
     }
 }

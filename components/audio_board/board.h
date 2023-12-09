@@ -64,7 +64,7 @@ audio_hal_handle_t audio_board_codec_init(void);
  *
  * @return The audio display service handle
  */
-display_service_handle_t audio_board_led_init(void);
+//  display_service_handle_t audio_board_led_init(void);
 
 /**
  * @brief Initialize key peripheral

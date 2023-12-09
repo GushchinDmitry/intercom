@@ -47,7 +47,7 @@
  */
 #define FUNC_AUDIO_CODEC_EN       (1)
 #define AUXIN_DETECT_GPIO         GPIO_NUM_12
-#define HEADPHONE_DETECT          GPIO_NUM_19
+//  #define HEADPHONE_DETECT          GPIO_NUM_19
 #define PA_ENABLE_GPIO            GPIO_NUM_21
 #define CODEC_ADC_I2S_PORT        (0)
 #define CODEC_ADC_BITS_PER_SAMPLE I2S_BITS_PER_SAMPLE_16BIT

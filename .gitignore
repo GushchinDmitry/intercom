@@ -1,3 +1,6 @@
+# ESP project
+build/
+
 # Prerequisites
 *.d
 

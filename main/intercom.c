@@ -34,7 +34,7 @@
 #include "smart_config.h"
 
 #include "audio_tone_uri.h"
-#include "audio_player_int_tone.h"
+// #include "audio_player_int_tone.h"
 #include "media_lib_adapter.h"
 #include "audio_idf_version.h"
 
@@ -51,8 +51,8 @@
 
 #include "test.h"
 
-#define WIFI_SSID "Iv.net"
-#define WIFI_PASSWORD "GfhjkmWiFi3333"
+#define WIFI_SSID "WiFi.net"
+#define WIFI_PASSWORD "Pass"
 
 
 static const char *TAG = "Icom";
@@ -77,8 +77,8 @@ static audio_element_handle_t raw_read, raw_write, element_algo;
 static audio_pipeline_handle_t recorder, player;
 static bool mute, is_smart_config;
 static display_service_handle_t disp;
-// static display_service_handle_t disp_led_22;                                // LED 22
 static periph_service_handle_t wifi_serv;
+static display_service_handle_t disp_led_22;                        // LED 22
 
 static esp_err_t recorder_pipeline_open()
 {
@@ -90,9 +90,9 @@ static esp_err_t recorder_pipeline_open()
     i2s_stream_cfg_t i2s_cfg = I2S_STREAM_CFG_DEFAULT();
     i2s_cfg.type = AUDIO_STREAM_READER;
     i2s_cfg.uninstall_drv = false;
-#ifdef CONFIG_ESP_LYRAT_MINI_V1_1_BOARD
-    i2s_cfg.i2s_port = 1;
-#endif
+// #ifdef CONFIG_ESP_LYRAT_MINI_V1_1_BOARD
+//     i2s_cfg.i2s_port = 1;
+// #endif
     i2s_cfg.task_core = 1;
     i2s_cfg.i2s_config.sample_rate = I2S_SAMPLE_RATE;
     i2s_stream_reader = i2s_stream_init(&i2s_cfg);
@@ -101,24 +101,24 @@ static esp_err_t recorder_pipeline_open()
     rsp_cfg_r.src_rate = I2S_SAMPLE_RATE;
     rsp_cfg_r.src_ch = I2S_CHANNELS;
     rsp_cfg_r.dest_rate = I2S_SAMPLE_RATE;
-#ifndef CONFIG_ESP_LYRAT_MINI_V1_1_BOARD
-    rsp_cfg_r.dest_ch = 1;
-#endif
+// #ifndef CONFIG_ESP_LYRAT_MINI_V1_1_BOARD
+//     rsp_cfg_r.dest_ch = 1;
+// #endif
     rsp_cfg_r.complexity = 5;
     rsp_cfg_r.task_core = 1;
     rsp_cfg_r.out_rb_size = 10 * 1024;
     audio_element_handle_t filter_r = rsp_filter_init(&rsp_cfg_r);
 
     algorithm_stream_cfg_t algo_config = ALGORITHM_STREAM_CFG_DEFAULT();
-#ifdef CONFIG_ESP_LYRAT_MINI_V1_1_BOARD
-    algo_config.input_type = ALGORITHM_STREAM_INPUT_TYPE1;
-#else
+// #ifdef CONFIG_ESP_LYRAT_MINI_V1_1_BOARD
+//     algo_config.input_type = ALGORITHM_STREAM_INPUT_TYPE1;
+// #else
     algo_config.input_type = ALGORITHM_STREAM_INPUT_TYPE2;
-#endif
+// #endif
     algo_config.task_core = 1;
-#ifdef DEBUG_AEC_INPUT
-    algo_config.debug_input = true;
-#endif
+// #ifdef DEBUG_AEC_INPUT
+//     algo_config.debug_input = true;
+// #endif
     element_algo = algo_stream_init(&algo_config);
     audio_element_set_music_info(element_algo, I2S_SAMPLE_RATE, 1, I2S_BITS);
 
@@ -126,30 +126,30 @@ static esp_err_t recorder_pipeline_open()
     audio_pipeline_register(recorder, filter_r, "filter_r");
     audio_pipeline_register(recorder, element_algo, "algo");
 
-#ifdef DEBUG_AEC_INPUT
-    wav_encoder_cfg_t wav_cfg = DEFAULT_WAV_ENCODER_CONFIG();
-    wav_cfg.task_core = 1;
-    audio_element_handle_t wav_encoder = wav_encoder_init(&wav_cfg);
+// #ifdef DEBUG_AEC_INPUT
+//     wav_encoder_cfg_t wav_cfg = DEFAULT_WAV_ENCODER_CONFIG();
+//     wav_cfg.task_core = 1;
+//     audio_element_handle_t wav_encoder = wav_encoder_init(&wav_cfg);
 
-    fatfs_stream_cfg_t fatfs_wd_cfg = FATFS_STREAM_CFG_DEFAULT();
-    fatfs_wd_cfg.type = AUDIO_STREAM_WRITER;
-    fatfs_wd_cfg.task_core = 1;
-    audio_element_handle_t fatfs_stream_writer = fatfs_stream_init(&fatfs_wd_cfg);
+//     fatfs_stream_cfg_t fatfs_wd_cfg = FATFS_STREAM_CFG_DEFAULT();
+//     fatfs_wd_cfg.type = AUDIO_STREAM_WRITER;
+//     fatfs_wd_cfg.task_core = 1;
+//     audio_element_handle_t fatfs_stream_writer = fatfs_stream_init(&fatfs_wd_cfg);
 
-    audio_pipeline_register(recorder, wav_encoder, "wav_enc");
-    audio_pipeline_register(recorder, fatfs_stream_writer, "fatfs_stream");
+//     audio_pipeline_register(recorder, wav_encoder, "wav_enc");
+//     audio_pipeline_register(recorder, fatfs_stream_writer, "fatfs_stream");
 
-    const char *link_tag[5] = {"i2s", "filter_r", "algo", "wav_enc", "fatfs_stream"};
-    audio_pipeline_link(recorder, &link_tag[0], 5);
+//     const char *link_tag[5] = {"i2s", "filter_r", "algo", "wav_enc", "fatfs_stream"};
+//     audio_pipeline_link(recorder, &link_tag[0], 5);
 
-    audio_element_info_t fat_info = {0};
-    audio_element_getinfo(fatfs_stream_writer, &fat_info);
-    fat_info.sample_rates = ALGORITHM_STREAM_DEFAULT_SAMPLE_RATE_HZ;
-    fat_info.bits = ALGORITHM_STREAM_DEFAULT_SAMPLE_BIT;
-    fat_info.channels = 2;
-    audio_element_setinfo(fatfs_stream_writer, &fat_info);
-    audio_element_set_uri(fatfs_stream_writer, "/sdcard/aec_in.wav");
-#else
+//     audio_element_info_t fat_info = {0};
+//     audio_element_getinfo(fatfs_stream_writer, &fat_info);
+//     fat_info.sample_rates = ALGORITHM_STREAM_DEFAULT_SAMPLE_RATE_HZ;
+//     fat_info.bits = ALGORITHM_STREAM_DEFAULT_SAMPLE_BIT;
+//     fat_info.channels = 2;
+//     audio_element_setinfo(fatfs_stream_writer, &fat_info);
+//     audio_element_set_uri(fatfs_stream_writer, "/sdcard/aec_in.wav");
+// #else
     rsp_filter_cfg_t rsp_cfg = DEFAULT_RESAMPLE_FILTER_CONFIG();
     rsp_cfg.src_rate = I2S_SAMPLE_RATE;
     rsp_cfg.src_ch = 1;
@@ -174,7 +174,7 @@ static esp_err_t recorder_pipeline_open()
 
     const char *link_tag[6] = {"i2s", "filter_r", "algo", "filter", "sip_enc", "raw"};
     audio_pipeline_link(recorder, &link_tag[0], 6);
-#endif
+// #endif
 
     ESP_LOGI(TAG, " SIP recorder has been created");
     return ESP_OK;
@@ -206,9 +206,9 @@ static esp_err_t player_pipeline_open()
     i2s_cfg.type = AUDIO_STREAM_WRITER;
     i2s_cfg.uninstall_drv = false;
     i2s_cfg.i2s_config.sample_rate = I2S_SAMPLE_RATE;
-#ifndef CONFIG_ESP_LYRAT_MINI_V1_1_BOARD
-    i2s_cfg.multi_out_num = 1;
-#endif
+// #ifndef CONFIG_ESP_LYRAT_MINI_V1_1_BOARD
+//     i2s_cfg.multi_out_num = 1;
+// #endif
     i2s_stream_writer = i2s_stream_init(&i2s_cfg);
 
     audio_pipeline_register(player, raw_write, "raw");
@@ -218,20 +218,20 @@ static esp_err_t player_pipeline_open()
     const char *link_tag[4] = {"raw", "sip_dec", "filter", "i2s"};
     audio_pipeline_link(player, &link_tag[0], 4);
 
-#ifndef CONFIG_ESP_LYRAT_MINI_V1_1_BOARD
-    //Please reference the way of ALGORITHM_STREAM_INPUT_TYPE2 in "algorithm_stream.h"
-    ringbuf_handle_t ringbuf_ref = rb_create(50 * 1024, 1);
-    audio_element_set_multi_input_ringbuf(element_algo, ringbuf_ref, 0);
-    audio_element_set_multi_output_ringbuf(i2s_stream_writer, ringbuf_ref, 0);
+// #ifndef CONFIG_ESP_LYRAT_MINI_V1_1_BOARD
+//     //Please reference the way of ALGORITHM_STREAM_INPUT_TYPE2 in "algorithm_stream.h"
+//     ringbuf_handle_t ringbuf_ref = rb_create(50 * 1024, 1);
+//     audio_element_set_multi_input_ringbuf(element_algo, ringbuf_ref, 0);
+//     audio_element_set_multi_output_ringbuf(i2s_stream_writer, ringbuf_ref, 0);
 
-    /* When the playback signal far ahead of the recording signal,
-        the playback signal needs to be delayed */
-    algo_stream_set_delay(i2s_stream_writer, ringbuf_ref, DEFAULT_REF_DELAY_MS);
+//     /* When the playback signal far ahead of the recording signal,
+//         the playback signal needs to be delayed */
+//     algo_stream_set_delay(i2s_stream_writer, ringbuf_ref, DEFAULT_REF_DELAY_MS);
 
-    /* When the playback signal after the recording signal,
-        the recording signal needs to be delayed */
-    algo_stream_set_delay(element_algo, audio_element_get_input_ringbuf(element_algo), DEFAULT_REC_DELAY_MS);
-#endif
+//     /* When the playback signal after the recording signal,
+//         the recording signal needs to be delayed */
+//     algo_stream_set_delay(element_algo, audio_element_get_input_ringbuf(element_algo), DEFAULT_REC_DELAY_MS);
+// #endif
 
     ESP_LOGI(TAG, "SIP player has been created");
     return ESP_OK;
@@ -262,11 +262,11 @@ static int _sip_event_handler(sip_event_msg_t *event)
             return ip_len;
         case SIP_EVENT_REGISTERED:
             ESP_LOGI(TAG, "SIP_EVENT_REGISTERED");
-            audio_player_int_tone_play(tone_uri[TONE_TYPE_SERVER_CONNECT]);
+            // audio_player_int_tone_play(tone_uri[TONE_TYPE_SERVER_CONNECT]);
             break;
         case SIP_EVENT_RINGING:
             ESP_LOGI(TAG, "ringing... RemotePhoneNum %s", (char *)event->data);
-            audio_player_int_tone_play(tone_uri[TONE_TYPE_ALARM]);
+            // audio_player_int_tone_play(tone_uri[TONE_TYPE_ALARM]);
             break;
         case SIP_EVENT_INVITING:
             ESP_LOGI(TAG, "SIP_EVENT_INVITING Remote Ring...");
@@ -294,12 +294,12 @@ static int _sip_event_handler(sip_event_msg_t *event)
             audio_pipeline_deinit(recorder);
             break;
         case SIP_EVENT_READ_AUDIO_DATA:
-#ifdef DEBUG_AEC_INPUT
-            vTaskDelay(20 / portTICK_PERIOD_MS);
-            return event->data_len;
-#else
+// #ifdef DEBUG_AEC_INPUT
+//             vTaskDelay(20 / portTICK_PERIOD_MS);
+//             return event->data_len;
+// #else
             return raw_stream_read(raw_read, (char *)event->data, event->data_len);
-#endif
+// #endif
         case SIP_EVENT_WRITE_AUDIO_DATA:
             return raw_stream_write(raw_write, (char *)event->data, event->data_len);
         case SIP_EVENT_READ_DTMF:
@@ -339,7 +339,7 @@ static esp_err_t input_key_service_cb(periph_service_handle_t handle, periph_ser
             case INPUT_KEY_USER_ID_PLAY:
                 ESP_LOGI(TAG, "[ * ] [Play] input key event (RecBtn)");
                 if (sip_state == SIP_STATE_RINGING) {
-                    audio_player_int_tone_stop();
+                    // audio_player_int_tone_stop();
                     esp_sip_uas_answer(sip, true);
                 } else if (sip_state == SIP_STATE_REGISTERED) {
                     esp_sip_uac_invite(sip, "101");
@@ -349,7 +349,7 @@ static esp_err_t input_key_service_cb(periph_service_handle_t handle, periph_ser
             /*case INPUT_KEY_USER_ID_PLAY:*/
                 ESP_LOGI(TAG, "[ * ] [Play] input key event (RecBtn)");
                 if (sip_state == SIP_STATE_RINGING) {
-                    audio_player_int_tone_stop();
+                    // audio_player_int_tone_stop();
                     esp_sip_uas_answer(sip, true);
                 } else if (sip_state == SIP_STATE_REGISTERED) {
                     esp_sip_uac_invite(sip, "101");
@@ -357,7 +357,7 @@ static esp_err_t input_key_service_cb(periph_service_handle_t handle, periph_ser
                 break;
             case INPUT_KEY_USER_ID_SET:
                 if (sip_state & SIP_STATE_RINGING) {
-                    audio_player_int_tone_stop();
+                    // audio_player_int_tone_stop();
                     esp_sip_uas_answer(sip, false);
                 } else if (sip_state & SIP_STATE_ON_CALL) {
                     esp_sip_uac_bye(sip);
@@ -394,7 +394,7 @@ static esp_err_t input_key_service_cb(periph_service_handle_t handle, periph_ser
                 is_smart_config = true;
                 esp_sip_destroy(sip);
                 wifi_service_setting_start(wifi_serv, 0);
-                audio_player_int_tone_play(tone_uri[TONE_TYPE_UNDER_SMARTCONFIG]);
+                // audio_player_int_tone_play(tone_uri[TONE_TYPE_UNDER_SMARTCONFIG]);
                 break;
         }
     }
@@ -406,9 +406,16 @@ static esp_err_t wifi_service_cb(periph_service_handle_t handle, periph_service_
 {
     ESP_LOGD(TAG, "event type:%d,source:%p, data:%p,len:%d,ctx:%p",
              evt->type, evt->source, evt->data, evt->len, ctx);
-    if (evt->type == WIFI_SERV_EVENT_CONNECTED) {
+    if (evt->type == WIFI_SERV_EVENT_CONNECTED) 
+    {
+        //  LED индикация подключения WiFi
+        ESP_LOGI(TAG, "Icom connected to WiFi");
+        icom_led_WIFI_set();
+    
+        //  Запуск SIP сервиса
         ESP_LOGI(TAG, "PERIPH_WIFI_CONNECTED [%d]", __LINE__);
         is_smart_config = false;
+#if 0
         ESP_LOGI(TAG, "[ 5 ] Create SIP Service");
         sip_config_t sip_cfg = {
             .uri = CONFIG_SIP_URI,
@@ -422,14 +429,26 @@ static esp_err_t wifi_service_cb(periph_service_handle_t handle, periph_service_
         };
         sip = esp_sip_init(&sip_cfg);
         esp_sip_start(sip);
-    } else if (evt->type == WIFI_SERV_EVENT_DISCONNECTED) {
+#endif
+    } 
+    else if (evt->type == WIFI_SERV_EVENT_DISCONNECTED) 
+    {
+        //  LED индикация подключения WiFi
+        ESP_LOGI(TAG, "Icom NOT connected to WiFi");
+        icom_led_WIFI_reset();
+
         ESP_LOGI(TAG, "PERIPH_WIFI_DISCONNECTED [%d]", __LINE__);
         if (is_smart_config == false) {
-            audio_player_int_tone_play(tone_uri[TONE_TYPE_PLEASE_SETTING_WIFI]);
+            // audio_player_int_tone_play(tone_uri[TONE_TYPE_PLEASE_SETTING_WIFI]);
         }
-    } else if (evt->type == WIFI_SERV_EVENT_SETTING_TIMEOUT) {
+    }
+    else if (evt->type == WIFI_SERV_EVENT_SETTING_TIMEOUT) 
+    {
+        //  LED индикация подключения WiFi
+        ESP_LOGI(TAG, "Icom connected OR NOT connected to WiFi    >>>>    Check status");
+
         ESP_LOGW(TAG, "WIFI_SERV_EVENT_SETTING_TIMEOUT [%d]", __LINE__);
-        audio_player_int_tone_play(tone_uri[TONE_TYPE_PLEASE_SETTING_WIFI]);
+        // audio_player_int_tone_play(tone_uri[TONE_TYPE_PLEASE_SETTING_WIFI]);
         is_smart_config = false;
     }
 
@@ -456,23 +475,72 @@ void setup_wifi()
     strncpy((char *)&sta_cfg.sta.ssid, WIFI_SSID, sizeof(sta_cfg.sta.ssid));
     strncpy((char *)&sta_cfg.sta.password, WIFI_PASSWORD, sizeof(sta_cfg.sta.password));
     wifi_service_set_sta_info(wifi_serv, &sta_cfg);
-    esp_err_t err = wifi_service_connect(wifi_serv);
+    wifi_service_connect(wifi_serv);
+
+    vTaskDelay(5000 / portTICK_PERIOD_MS);
+
+    //  TODO
+    //  Вывести параметры sta_cfg.sta
+    ESP_LOGI(TAG, " ");
+    ESP_LOGI(TAG, "----------  WiFi  ----------");
+    ESP_LOGI(TAG, "WiFi SSID = %s", WIFI_SSID);
+    ESP_LOGI(TAG, "WiFi PASS = %s", WIFI_PASSWORD);
+    ESP_LOGI(TAG, " ");
+
+    ESP_LOGI(TAG, "WiFi sta.ssid = %s", sta_cfg.sta.ssid);
+    ESP_LOGI(TAG, "WiFi sta.pass = %s", sta_cfg.sta.password);
+    ESP_LOGI(TAG, " ");
+
+    ESP_LOGI(TAG, "WiFi ap.ssid = %s", sta_cfg.ap.ssid);
+    ESP_LOGI(TAG, "WiFi ap.pass = %s", sta_cfg.ap.password);
+    ESP_LOGI(TAG, " ");
+
+    //ESP_LOGI(TAG, "WiFi: %s", wifi_serv->service_name);
+    
+            
+                //wifi_service_t *serv = periph_service_get_data(wifi_serv);
+
+                    // if (wifi_serv->reason != WIFI_SERV_STA_SET_INFO) {
+                    //     ESP_LOGI(TAG, " ");
+                    //     ESP_LOGI(TAG, "WiFi sta.ssid = %s", wifi_cfg.sta.ssid);
+                    //     ESP_LOGI(TAG, "WiFi sta.pass = %s", wifi_cfg.sta.password);
+                    //     ESP_LOGI(TAG, " ");
+                        // if (wifi_ssid_manager_get_latest_config(serv->ssid_manager, &wifi_cfg) != ESP_OK) {
+                    //         ESP_LOGW(TAG, "No ssid stored in flash, try to connect to wifi set by wifi_service_set_sta_info()");
+                    //         if (serv->info.sta.ssid[0] == 0) {
+                    //             ESP_LOGW(TAG, "There is no preset ssid, please set the wifi first");
+                    //             continue;
+                    //         }
+                    //         memcpy(&wifi_cfg, &serv->info, sizeof(wifi_config_t));
+                        // }
+                    // }
+                        ESP_LOGI(TAG, " ");
+                        ESP_LOGI(TAG, "WiFi sta.ssid = %s", sta_cfg.sta.ssid);
+                        ESP_LOGI(TAG, "WiFi sta.pass = %s", sta_cfg.sta.password);
+                        ESP_LOGI(TAG, " ");
+
+
+
+
+
 
     //  Если не подключились, запускаем точку доступа
-    if(err == ESP_OK)
-    {
-        ESP_LOGI(TAG, "Icom connected to WiFi");
-        icom_led_WIFI_set();
-    }
-    else
-    {
-        ESP_LOGI(TAG, "Icom NOT connected to WiFi");
-        ESP_LOGI(TAG, "Starts Access Point (AP)");
-        //icom_led_WIFI_reset();
+    // if(err == ESP_OK)
+    // {
+    //     ESP_LOGI(TAG, "Icom connected to WiFi");
+    //     icom_led_WIFI_set();
+    // }
+    // else
+    // {
+    //     ESP_LOGI(TAG, "Icom NOT connected to WiFi");
+    //     ESP_LOGI(TAG, "Starts Access Point (AP)");
+    //     icom_led_WIFI_reset();
 
-        // Добавить запуск точки доступа
+    //     // TODO:  
+    //     //      Добавить запуск точки доступа
+    //     //      
 
-    }
+    // }
 
     //  Подключение LED индикации WiFi
 
@@ -512,9 +580,9 @@ void app_main()
     ESP_LOGI(TAG, "[1.1] Initialize and start peripherals");
     audio_board_key_init(set);                                                      // инициализация кнопок управления (REC BTN & MODE BTN ++ TOUCH_PAD_SELх)
     
-#ifdef DEBUG_AEC_INPUT
-    audio_board_sdcard_init(set, SD_MODE_1_LINE);
-#endif
+// #ifdef DEBUG_AEC_INPUT
+//     audio_board_sdcard_init(set, SD_MODE_1_LINE);
+// #endif
 
     ESP_LOGI(TAG, "[1.2] Create and start input key service");
     input_key_service_info_t input_key_info[] = INPUT_KEY_DEFAULT_INFO();           //  передается перечень кнопок управления
@@ -525,15 +593,19 @@ void app_main()
 
 #ifdef FUNC_SYS_LEN_EN
     ESP_LOGI(TAG, "[ 1.3 ] Create display service instance");
-    disp = audio_board_led_init();                                                  //  создание задачи LED индикаторов
+    //  disp = audio_board_led_init();                                                  //  создание задачи LED индикаторов
     //  disp_led_22 = icom_led_init();                                                  //  создание задачи LED индикаторов
 #endif
 
 
-    ESP_LOGI(TAG, "[1.4] Configure LEDs");
+    ESP_LOGI(TAG, "[ 1.4 ] Configure LEDs");
     icom_led_config();                                                              // Инициализация светодиодов индикации режимов работы
 
-    ESP_LOGI(TAG, "[1.5] Configure IOs");
+    ESP_LOGI(TAG, "[ 1.4 ] Create LED service instance");
+    disp_led_22 = icom_led_init();                                                  //  создание задачи LED индикаторов
+
+
+    ESP_LOGI(TAG, "[ 1.5 ] Configure IOs");
     icom_ctrl_config();                                                             // Инициализация дискретных входов/выходов
 
 
@@ -546,14 +618,13 @@ void app_main()
     //  AUDIO_HAL_CODEC_MODE_LINE_IN,     /*!< set adc channel */
 
     audio_hal_ctrl_codec(board_handle->audio_hal, AUDIO_HAL_CODEC_MODE_BOTH, AUDIO_HAL_CTRL_START);
-    //  audio_hal_ctrl_codec(board_handle->audio_hal, AUDIO_HAL_CODEC_MODE_BOTH, AUDIO_HAL_CTRL_START);
     audio_hal_set_volume(board_handle->audio_hal, 80);
 
     input_key_service_add_key(input_ser, input_key_info, INPUT_KEY_NUM);
     periph_service_set_callback(input_ser, input_key_service_cb, (void *)board_handle);
 
     ESP_LOGI(TAG, "[ 3 ] Initialize tone player");
-    audio_player_int_tone_init();
+    // audio_player_int_tone_init();
 
     ESP_LOGI(TAG, "[ 4 ] Create Wi-Fi service instance");
     setup_wifi();
@@ -565,11 +636,12 @@ void app_main()
     ESP_LOGI(TAG, "[ XXXXX ] TEST");
 
 
+
     int vol;
     //int vol=65;
     //es8374_codec_set_voice_volume(vol);
     es8374_codec_get_voice_volume(&vol);
-    ESP_LOGI(TAG, "[ XXXXX ] %d", vol);
+    ESP_LOGI(TAG, "[ XXXXX ] Volume = %d", vol);
     
     //es8374_read_all();
 
@@ -604,7 +676,7 @@ void app_main()
     //  udp://1004:1234@10.10.34.9:5060
     //  udp://1005:1234@sip.intercom.host:7060
 
-    //  display_service_set_pattern(disp_led_22, DISPLAY_PATTERN_TURN_ON, 0);
+    display_service_set_pattern(disp_led_22, DISPLAY_PATTERN_TURN_ON, 0);
 
 
     test();

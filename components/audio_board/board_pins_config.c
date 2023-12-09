@@ -134,12 +134,12 @@ int8_t get_auxin_detect_gpio(void)
 {
     return AUXIN_DETECT_GPIO;
 }
-
+/*
 int8_t get_headphone_detect_gpio(void)
 {
     return HEADPHONE_DETECT;
 }
-
+*/
 int8_t get_pa_enable_gpio(void)
 {
     return PA_ENABLE_GPIO;
@@ -180,8 +180,9 @@ int8_t get_input_voldown_id(void)
 }
 
 // led pins
-
+/*
 int8_t get_green_led_gpio(void)
 {
     return GREEN_LED_GPIO;
 }
+*/
