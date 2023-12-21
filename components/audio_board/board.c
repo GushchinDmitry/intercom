@@ -31,7 +31,7 @@
 #include "periph_touch.h"
 #include "periph_button.h"
 
-static const char *TAG = "AUDIO_BOARD";
+static const char *TAG = "ICOM_BOARD";
 
 static audio_board_handle_t board_handle = 0;
 

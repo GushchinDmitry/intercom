@@ -11,9 +11,7 @@ extern "C" {
 
 #include "display_service.h"
 
-/**
- * @brief Configure LED peripheral
- */
+
 void icom_ctrl_config(void);
 
 int icom_input_CALL_get(void);

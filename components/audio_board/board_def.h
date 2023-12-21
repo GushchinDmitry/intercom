@@ -30,16 +30,19 @@
 /**
  * @brief SDCARD Function Definition
  */
+/*
 #define FUNC_SDCARD_EN            (0)
 #define SDCARD_OPEN_FILE_NUM_MAX  5
 #define SDCARD_INTR_GPIO          GPIO_NUM_34
-
+*/
 
 /**
  * @brief LED Function Definition
  */
+/*
 #define FUNC_SYS_LEN_EN           (0)
-//  #define GREEN_LED_GPIO            GPIO_NUM_22
+#define GREEN_LED_GPIO            GPIO_NUM_22
+*/
 
 
 /**

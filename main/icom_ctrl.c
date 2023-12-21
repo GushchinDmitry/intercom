@@ -12,7 +12,7 @@
 
 #include "icom_ctrl.h"
 
-static const char *TAG = "ICOM_CTRL";
+static const char *TAG = "Icom_Ctrl";
 
 #define ICOM_IN_CALL    GPIO_NUM_33
 
@@ -20,6 +20,9 @@ static const char *TAG = "ICOM_CTRL";
 #define ICOM_OUT_OPEN   GPIO_NUM_12
 
 
+/**
+ * @brief Configure IO peripheral
+ */
 void icom_ctrl_config()
 {
    //  Configure the icom peripheral (GPIO)

@@ -4,8 +4,8 @@
 
 */
 
-#ifndef _BOARD_PINS_DEF_H_
-#define _BOARD_PINS_DEF_H_
+#ifndef _ICOM_PINS_H_
+#define _ICOM_PINS_H_
 
 
 /**
@@ -19,4 +19,4 @@
 #define ICOM_LED_OPEN   GPIO_NUM_15
 
 
-#endif  //  _BOARD_PINS_DEF_H_
+#endif  //  _ICOM_PINS_H_

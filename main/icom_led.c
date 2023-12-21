@@ -11,16 +11,22 @@
 #include "driver/gpio.h"
 #include "esp_log.h"
 
-#include "board_pins_def.h"
+#include "icom_pins.h"
 
 #include "display_service.h"
 #include "led_indicator.h"
 
 #include "icom_led.h"
 
-static const char *TAG = "ICOM_LED";
+static const char *TAG = "Icom_LED";
 
 
+static display_service_handle_t disp_led_WiFi;                        // LED WiFi
+
+
+/**
+ * @brief Configure LED peripheral
+ */
 void icom_led_config()
 {
     //  Configure the peripheral according to the LED type
@@ -50,6 +56,7 @@ void icom_led_config()
 
 }
 
+
 void icom_led_WIFI_set()    {   gpio_set_level(ICOM_LED_WIFI, true);    }
 void icom_led_WIFI_reset()  {   gpio_set_level(ICOM_LED_WIFI, false);   }
 
@@ -66,65 +73,14 @@ void icom_led_OPEN_set()    {   gpio_set_level(ICOM_LED_OPEN, true);    }
 void icom_led_OPEN_reset()  {   gpio_set_level(ICOM_LED_OPEN, false);   }
 
 
-/*
-void blink_test_task()
+/**
+ * @brief Initialize led peripheral and display service
+ *
+ * @return The display service handle
+ */
+display_service_handle_t disp_led_WiFi_init(void)
 {
-    //  Configure the peripheral according to the LED type
-
-    ESP_LOGI(TAG, "Configured to blink GPIO LED!");
-
-    gpio_reset_pin(ICOM_LED_WIFI);
-
-    //  Set the GPIO as a push/pull output
-    gpio_set_direction(ICOM_LED_WIFI, GPIO_MODE_OUTPUT);
-
-
-    //  Configure the icom peripheral (GPIO)
-    ESP_LOGI(TAG, "Configured the GPIO peripheral");
-    gpio_reset_pin(ICOM_ANSWER);
-    gpio_set_direction(ICOM_ANSWER, GPIO_MODE_OUTPUT);
-    //gpio_set_level(ICOM_ANSWER, true);
-
-    gpio_reset_pin(ICOM_CALL);
-    gpio_set_direction(ICOM_CALL, GPIO_MODE_INPUT);
-    gpio_get_level(ICOM_CALL);
-
-
-    while (1) 
-    {
-        //  Toggle the LED state
-
-        //s_led_state = !s_led_state;
-
-        //ESP_LOGI(TAG, "Turning the LED %s!", s_led_state == true ? "ON" : "OFF");
-        
-        //  Set the GPIO level according to the state (LOW or HIGH)
-        //gpio_set_level(ICOM_LED_WIFI, true);
-        //gpio_set_level(ICOM_ANSWER, s_led_state);
-
-        if (gpio_get_level(!ICOM_CALL))
-        {
-            ESP_LOGI(TAG, "Input CALL !!!");
-            gpio_set_level(ICOM_LED_CALL, true);
-            gpio_set_level(ICOM_ANSWER, false);            
-        }
-        else
-        {
-            gpio_set_level(ICOM_LED_CALL, false);
-        }
-
-        vTaskDelay(CONFIG_BLINK_PERIOD / portTICK_PERIOD_MS);
-    }
-
-}
-*/
-
-
-#define LED_GPIO_22 GPIO_NUM_22
-
-display_service_handle_t icom_led_init(void)
-{
-    led_indicator_handle_t led = led_indicator_init((gpio_num_t) GPIO_NUM_22);
+    led_indicator_handle_t led = led_indicator_init((gpio_num_t) ICOM_LED_WIFI);
     display_service_config_t display = {
         .based_cfg = {
             .task_stack = 0,
@@ -135,11 +91,38 @@ display_service_handle_t icom_led_init(void)
             .service_stop = NULL,
             .service_destroy = NULL,
             .service_ioctl = led_indicator_pattern,
-            .service_name = "LED_22_serv",
+            .service_name = "LED_WiFi_serv",
             .user_data = NULL,
         },
         .instance = led,
     };
-
     return display_service_create(&display);
+}
+
+
+/**
+ * @brief Create WiFi LED task
+ */
+void icom_led_WiFi_init()
+{
+    ESP_LOGI(TAG, "Create LED WiFi service instance");
+    disp_led_WiFi = disp_led_WiFi_init();
+}
+
+
+/**
+ * @brief WiFi LED On
+ */
+void icom_led_WiFi_On()
+{
+    display_service_set_pattern(disp_led_WiFi, DISPLAY_PATTERN_TURN_ON, 0);
+}
+
+
+/**
+ * @brief WiFi LED Off
+ */
+void icom_led_WiFi_Off()
+{
+    display_service_set_pattern(disp_led_WiFi, DISPLAY_PATTERN_TURN_OFF, 0);
 }

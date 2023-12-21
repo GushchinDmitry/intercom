@@ -2,6 +2,7 @@ set (COMPONENT_SRCS
         "intercom.c"
         "icom_led.c"
         "icom_ctrl.c"
+        "icom_wifi.c"
         "test.c"
     )
 

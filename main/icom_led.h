@@ -9,16 +9,9 @@
 extern "C" {
 #endif
 
-#include "display_service.h"
 
-/**
- * @brief Configure LED peripheral
- */
 void icom_led_config(void);
 
-
-void icom_led_WIFI_set(void);
-void icom_led_WIFI_reset(void);
 
 void icom_led_VOIP_set(void);
 void icom_led_VOIP_reset(void);
@@ -33,13 +26,10 @@ void icom_led_OPEN_set(void);
 void icom_led_OPEN_reset(void);
 
 
+void icom_led_WiFi_init();
+void icom_led_WiFi_On();
+void icom_led_WiFi_Off();
 
-/**
- * @brief Initialize led peripheral and display service
- *
- * @return The display service handle
- */
-display_service_handle_t icom_led_init(void);
 
 #ifdef __cplusplus
 }
