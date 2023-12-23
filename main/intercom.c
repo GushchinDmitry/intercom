@@ -33,7 +33,7 @@
 #include "wifi_service.h"
 #include "smart_config.h"
 
-#include "audio_tone_uri.h"
+// #include "audio_tone_uri.h"
 // #include "audio_player_int_tone.h"
 #include "media_lib_adapter.h"
 #include "audio_idf_version.h"
