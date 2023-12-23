@@ -93,7 +93,7 @@ esp_err_t i2s_mclk_gpio_select(i2s_port_t i2s_num, gpio_num_t gpio_num);
  * @return  -1      non-existent
  *          Others  sdcard interrupt gpio number
  */
-int8_t get_sdcard_intr_gpio(void);
+//  int8_t get_sdcard_intr_gpio(void);
 
 /**
  * @brief  Get sdcard maximum number of open files
@@ -165,7 +165,7 @@ int8_t get_input_mode_id(void);
  * @return -1       non-existent
  *         Others   number
  */
-int8_t get_input_set_id(void);
+//  int8_t get_input_set_id(void);
 
 /**
  * @brief Get number for play function
@@ -173,7 +173,7 @@ int8_t get_input_set_id(void);
  * @return -1       non-existent
  *         Others   number
  */
-int8_t get_input_play_id(void);
+//  int8_t get_input_play_id(void);
 
 /**
  * @brief number for volume up function
@@ -181,7 +181,7 @@ int8_t get_input_play_id(void);
  * @return -1       non-existent
  *         Others   number
  */
-int8_t get_input_volup_id(void);
+//  int8_t get_input_volup_id(void);
 
 /**
  * @brief Get number for volume down function
@@ -189,7 +189,7 @@ int8_t get_input_volup_id(void);
  * @return -1       non-existent
  *         Others   number
  */
-int8_t get_input_voldown_id(void);
+//  int8_t get_input_voldown_id(void);
 
 /**
  * @brief Get green led gpio number
@@ -197,7 +197,7 @@ int8_t get_input_voldown_id(void);
  * @return -1       non-existent
  *        Others    gpio number
  */
-int8_t get_reset_codec_gpio(void);
+//  int8_t get_reset_codec_gpio(void);
 
 /**
  * @brief Get DSP reset gpio number
@@ -221,7 +221,7 @@ int8_t get_reset_board_gpio(void);
  * @return -1       non-existent
  *         Others   gpio number
  */
-int8_t get_blue_led_gpio(void);
+//  int8_t get_blue_led_gpio(void);
 
 #ifdef __cplusplus
 }

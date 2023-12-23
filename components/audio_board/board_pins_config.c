@@ -30,7 +30,7 @@
 #include "audio_mem.h"
 
 
-static const char *TAG = "Icom_Pins";
+static const char *TAG = "Board_Pins";
 
 esp_err_t get_i2c_pins(i2c_port_t port, i2c_config_t *i2c_config)
 {
@@ -123,12 +123,13 @@ int8_t get_sdcard_intr_gpio(void)
 {
     return SDCARD_INTR_GPIO;
 }
-
+*/
 int8_t get_sdcard_open_file_num_max(void)
 {
     return SDCARD_OPEN_FILE_NUM_MAX;
 }
-*/
+
+
 // input-output pins
 
 int8_t get_auxin_detect_gpio(void)

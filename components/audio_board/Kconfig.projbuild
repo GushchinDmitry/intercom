@@ -6,7 +6,7 @@ choice AUDIO_BOARD
     help
         Select an audio board to use with the ESP-ADF
 config AUDIO_BOARD_CUSTOM
-    bool "Custom audio board"
+    bool "Icom board"
 endchoice
 
 endmenu

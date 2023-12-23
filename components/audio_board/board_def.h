@@ -25,16 +25,15 @@
 #ifndef _AUDIO_BOARD_DEFINITION_H_
 #define _AUDIO_BOARD_DEFINITION_H_
 
-#include "driver/touch_pad.h"
+// #include "driver/touch_pad.h"
 
 /**
  * @brief SDCARD Function Definition
  */
-/*
-#define FUNC_SDCARD_EN            (0)
+// #define FUNC_SDCARD_EN            (0)
 #define SDCARD_OPEN_FILE_NUM_MAX  5
-#define SDCARD_INTR_GPIO          GPIO_NUM_34
-*/
+// #define SDCARD_INTR_GPIO          GPIO_NUM_34
+
 
 /**
  * @brief LED Function Definition
@@ -94,16 +93,12 @@ extern audio_hal_func_t AUDIO_CODEC_ES8374_DEFAULT_HANDLE;
  */
 
 #define FUNC_BUTTON_EN            (1)
-#define INPUT_KEY_NUM             6
+#define INPUT_KEY_NUM             2
 #define BUTTON_REC_ID             GPIO_NUM_36
 #define BUTTON_MODE_ID            GPIO_NUM_39
-#define BUTTON_SET_ID             TOUCH_PAD_NUM9
-#define BUTTON_PLAY_ID            TOUCH_PAD_NUM8
-#define BUTTON_VOLUP_ID           TOUCH_PAD_NUM7
-#define BUTTON_VOLDOWN_ID         TOUCH_PAD_NUM4
 
 #define INPUT_KEY_DEFAULT_INFO() {                      \
-     {                                                  \
+    {                                                   \
         .type = PERIPH_ID_BUTTON,                       \
         .user_id = INPUT_KEY_USER_ID_REC,               \
         .act_id = BUTTON_REC_ID,                        \
@@ -112,26 +107,6 @@ extern audio_hal_func_t AUDIO_CODEC_ES8374_DEFAULT_HANDLE;
         .type = PERIPH_ID_BUTTON,                       \
         .user_id = INPUT_KEY_USER_ID_MODE,              \
         .act_id = BUTTON_MODE_ID,                       \
-    },                                                  \
-    {                                                   \
-        .type = PERIPH_ID_TOUCH,                        \
-        .user_id = INPUT_KEY_USER_ID_SET,               \
-        .act_id = BUTTON_SET_ID,                        \
-    },                                                  \
-    {                                                   \
-        .type = PERIPH_ID_TOUCH,                        \
-        .user_id = INPUT_KEY_USER_ID_PLAY,              \
-        .act_id = BUTTON_PLAY_ID,                       \
-    },                                                  \
-    {                                                   \
-        .type = PERIPH_ID_TOUCH,                        \
-        .user_id = INPUT_KEY_USER_ID_VOLUP,             \
-        .act_id = BUTTON_VOLUP_ID,                      \
-    },                                                  \
-    {                                                   \
-        .type = PERIPH_ID_TOUCH,                        \
-        .user_id = INPUT_KEY_USER_ID_VOLDOWN,           \
-        .act_id = BUTTON_VOLDOWN_ID,                    \
     }                                                   \
 }
 

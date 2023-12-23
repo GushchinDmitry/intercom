@@ -28,10 +28,10 @@
 
 #include "periph_sdcard.h"
 #include "led_indicator.h"
-#include "periph_touch.h"
+// #include "periph_touch.h"
 #include "periph_button.h"
 
-static const char *TAG = "ICOM_BOARD";
+static const char *TAG = "BOARD";
 
 static audio_board_handle_t board_handle = 0;
 
@@ -81,7 +81,6 @@ display_service_handle_t audio_board_led_init(void)
         },
         .instance = led,
     };
-
     return display_service_create(&display);
 }
 */
@@ -98,6 +97,7 @@ esp_err_t audio_board_key_init(esp_periph_set_handle_t set)
     if (ret != ESP_OK) {
         return ret;
     }
+    /*
     periph_touch_cfg_t touch_cfg = {
         .touch_mask = TOUCH_PAD_SEL4 | TOUCH_PAD_SEL7 | TOUCH_PAD_SEL8 | TOUCH_PAD_SEL9,
         .tap_threshold_percent = 70,
@@ -105,9 +105,11 @@ esp_err_t audio_board_key_init(esp_periph_set_handle_t set)
     esp_periph_handle_t touch_periph = periph_touch_init(&touch_cfg);
     AUDIO_NULL_CHECK(TAG, touch_periph, return ESP_ERR_ADF_MEMORY_LACK);
     ret = esp_periph_start(set, touch_periph);
+    */
     return ret;
 }
 
+/*
 esp_err_t audio_board_sdcard_init(esp_periph_set_handle_t set, periph_sdcard_mode_t mode)
 {
     if (mode >= SD_MODE_MAX) {
@@ -137,6 +139,7 @@ esp_err_t audio_board_sdcard_init(esp_periph_set_handle_t set, periph_sdcard_mod
     }
     return ret;
 }
+*/
 
 audio_board_handle_t audio_board_get_handle(void)
 {
