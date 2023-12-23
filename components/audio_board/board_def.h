@@ -92,6 +92,7 @@ extern audio_hal_func_t AUDIO_CODEC_ES8374_DEFAULT_HANDLE;
 /**
  * @brief Button Function Definition
  */
+
 #define FUNC_BUTTON_EN            (1)
 #define INPUT_KEY_NUM             6
 #define BUTTON_REC_ID             GPIO_NUM_36
@@ -133,5 +134,6 @@ extern audio_hal_func_t AUDIO_CODEC_ES8374_DEFAULT_HANDLE;
         .act_id = BUTTON_VOLDOWN_ID,                    \
     }                                                   \
 }
+
 
 #endif

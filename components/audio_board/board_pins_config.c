@@ -29,6 +29,7 @@
 #include "audio_error.h"
 #include "audio_mem.h"
 
+
 static const char *TAG = "Icom_Pins";
 
 esp_err_t get_i2c_pins(i2c_port_t port, i2c_config_t *i2c_config)
@@ -158,7 +159,7 @@ int8_t get_input_mode_id(void)
 }
 
 // touch pins
-
+/*
 int8_t get_input_set_id(void)
 {
     return BUTTON_SET_ID;
@@ -178,6 +179,7 @@ int8_t get_input_voldown_id(void)
 {
     return BUTTON_VOLDOWN_ID;
 }
+*/
 
 // led pins
 /*

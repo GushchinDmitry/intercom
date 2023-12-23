@@ -9,8 +9,6 @@
 extern "C" {
 #endif
 
-#include "display_service.h"
-
 
 void icom_ctrl_config(void);
 
@@ -21,6 +19,10 @@ void icom_output_ANSW_reset(void);
 
 void icom_output_OPEN_set(void);
 void icom_output_OPEN_reset(void);
+
+
+//static esp_err_t input_key_service_cb(periph_service_handle_t handle, periph_service_event_t *evt, void *ctx);
+
 
 #ifdef __cplusplus
 }
