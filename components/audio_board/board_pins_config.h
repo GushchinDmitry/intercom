@@ -159,45 +159,9 @@ int8_t get_input_rec_id(void);
  */
 int8_t get_input_mode_id(void);
 
-/**
- * @brief Get number for set function
- *
- * @return -1       non-existent
- *         Others   number
- */
-//  int8_t get_input_set_id(void);
 
-/**
- * @brief Get number for play function
- *
- * @return -1       non-existent
- *         Others   number
- */
-//  int8_t get_input_play_id(void);
 
-/**
- * @brief number for volume up function
- *
- * @return -1       non-existent
- *         Others   number
- */
-//  int8_t get_input_volup_id(void);
 
-/**
- * @brief Get number for volume down function
- *
- * @return -1       non-existent
- *         Others   number
- */
-//  int8_t get_input_voldown_id(void);
-
-/**
- * @brief Get green led gpio number
- *
- * @return -1       non-existent
- *        Others    gpio number
- */
-//  int8_t get_reset_codec_gpio(void);
 
 /**
  * @brief Get DSP reset gpio number
@@ -207,21 +171,7 @@ int8_t get_input_mode_id(void);
  */
 int8_t get_reset_board_gpio(void);
 
-/**
- * @brief Get DSP reset gpio number
- *
- * @return -1       non-existent
- *         Others   gpio number
- */
-//  int8_t get_green_led_gpio(void);
 
-/**
- * @brief Get green led gpio number
- *
- * @return -1       non-existent
- *         Others   gpio number
- */
-//  int8_t get_blue_led_gpio(void);
 
 #ifdef __cplusplus
 }

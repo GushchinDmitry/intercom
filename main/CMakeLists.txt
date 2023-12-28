@@ -1,10 +1,10 @@
 set (COMPONENT_SRCS 
-        "intercom.c"
-        "icom_led.c"
-        "icom_ctrl.c"
-        "icom_wifi.c"
-        "icom_voip.c"
-        "test.c"
+        icom_led.c
+        icom_ctrl.c
+        icom_wifi.c
+        icom_voip.c
+        intercom.c
+        test.c
     )
 
 set(COMPONENT_ADD_INCLUDEDIRS .)

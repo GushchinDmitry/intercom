@@ -117,13 +117,7 @@ esp_err_t i2s_mclk_gpio_select(i2s_port_t i2s_num, gpio_num_t gpio_num)
     return ESP_OK;
 }
 
-// sdcard
-/*
-int8_t get_sdcard_intr_gpio(void)
-{
-    return SDCARD_INTR_GPIO;
-}
-*/
+
 int8_t get_sdcard_open_file_num_max(void)
 {
     return SDCARD_OPEN_FILE_NUM_MAX;
@@ -159,33 +153,3 @@ int8_t get_input_mode_id(void)
     return BUTTON_MODE_ID;
 }
 
-// touch pins
-/*
-int8_t get_input_set_id(void)
-{
-    return BUTTON_SET_ID;
-}
-
-int8_t get_input_play_id(void)
-{
-    return BUTTON_PLAY_ID;
-}
-
-int8_t get_input_volup_id(void)
-{
-    return BUTTON_VOLUP_ID;
-}
-
-int8_t get_input_voldown_id(void)
-{
-    return BUTTON_VOLDOWN_ID;
-}
-*/
-
-// led pins
-/*
-int8_t get_green_led_gpio(void)
-{
-    return GREEN_LED_GPIO;
-}
-*/
