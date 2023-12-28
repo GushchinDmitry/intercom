@@ -13,6 +13,7 @@
 
 #include "icom_led.h"
 #include "icom_wifi.h"
+#include "icom_voip.h"
 
 #include "smart_config.h"
 
@@ -47,6 +48,8 @@ static esp_err_t wifi_service_cb(periph_service_handle_t handle, periph_service_
         is_smart_config = false;
 #if 0
         ESP_LOGI(TAG, "[ 5 ] Create SIP Service");
+        sip_service_create();
+/*        
         sip_config_t sip_cfg = {
             .uri = CONFIG_SIP_URI,
             .event_handler = _sip_event_handler,
@@ -59,6 +62,7 @@ static esp_err_t wifi_service_cb(periph_service_handle_t handle, periph_service_
         };
         sip = esp_sip_init(&sip_cfg);
         esp_sip_start(sip);
+*/
 #endif
     } 
     else if (evt->type == WIFI_SERV_EVENT_DISCONNECTED) 
@@ -89,6 +93,9 @@ static esp_err_t wifi_service_cb(periph_service_handle_t handle, periph_service_
 }
 
 
+/**
+ * @brief Initialize WiFi
+ */
 void setup_wifi()
 {
     ESP_LOGI(TAG, "Create Wi-Fi service instance");

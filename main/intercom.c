@@ -44,6 +44,7 @@
 #include "icom_led.h"
 #include "icom_ctrl.h"
 #include "icom_wifi.h"
+#include "icom_voip.h"
 
 
 #include "test.h"
@@ -52,240 +53,39 @@
 #define WIFI_SSID       "WiFi.net"
 #define WIFI_PASSWORD   "Pass"
 
+//  udp://1004:1234@10.10.34.9:5060
+//  udp://1005:1234@sip.intercom.host:7060
+
 
 static const char *TAG = "Icom";
 
-/* Debug original input data for AEC feature*/
-// #define DEBUG_AEC_INPUT
 
-#define I2S_SAMPLE_RATE     16000
-#define I2S_CHANNELS        2
-#define I2S_BITS            16
-
-#define CODEC_SAMPLE_RATE    8000
-#define CODEC_CHANNELS       1
 
 /* The AEC internal buffering mechanism requires that the recording signal
    is delayed by around 0 - 10 ms compared to the corresponding reference (playback) signal. */
 #define DEFAULT_REF_DELAY_MS    0
 #define DEFAULT_REC_DELAY_MS    50
 
-static sip_handle_t sip;
-static audio_element_handle_t raw_read, raw_write, element_algo;
-static audio_pipeline_handle_t recorder, player;
+// static sip_handle_t sip;
+// static audio_element_handle_t raw_read, raw_write, element_algo;
+// static audio_pipeline_handle_t recorder, player;
 static bool mute;
 // static bool is_smart_config;
 // static display_service_handle_t disp;
 // static periph_service_handle_t wifi_serv;
 // static display_service_handle_t disp_led_WiFi;                        // LED WiFi
 
-static esp_err_t recorder_pipeline_open()
-{
-    audio_element_handle_t i2s_stream_reader;
-    audio_pipeline_cfg_t pipeline_cfg = DEFAULT_AUDIO_PIPELINE_CONFIG();
-    recorder = audio_pipeline_init(&pipeline_cfg);
-    AUDIO_NULL_CHECK(TAG, recorder, return ESP_FAIL);
-
-    i2s_stream_cfg_t i2s_cfg = I2S_STREAM_CFG_DEFAULT();
-    i2s_cfg.type = AUDIO_STREAM_READER;
-    i2s_cfg.uninstall_drv = false;
-    i2s_cfg.task_core = 1;
-    i2s_cfg.i2s_config.sample_rate = I2S_SAMPLE_RATE;
-    i2s_stream_reader = i2s_stream_init(&i2s_cfg);
-
-    rsp_filter_cfg_t rsp_cfg_r = DEFAULT_RESAMPLE_FILTER_CONFIG();
-    rsp_cfg_r.src_rate = I2S_SAMPLE_RATE;
-    rsp_cfg_r.src_ch = I2S_CHANNELS;
-    rsp_cfg_r.dest_rate = I2S_SAMPLE_RATE;
-    rsp_cfg_r.complexity = 5;
-    rsp_cfg_r.task_core = 1;
-    rsp_cfg_r.out_rb_size = 10 * 1024;
-    audio_element_handle_t filter_r = rsp_filter_init(&rsp_cfg_r);
-
-    algorithm_stream_cfg_t algo_config = ALGORITHM_STREAM_CFG_DEFAULT();
-    algo_config.input_type = ALGORITHM_STREAM_INPUT_TYPE2;
-    algo_config.task_core = 1;
-    element_algo = algo_stream_init(&algo_config);
-    audio_element_set_music_info(element_algo, I2S_SAMPLE_RATE, 1, I2S_BITS);
-
-    audio_pipeline_register(recorder, i2s_stream_reader, "i2s");
-    audio_pipeline_register(recorder, filter_r, "filter_r");
-    audio_pipeline_register(recorder, element_algo, "algo");
-
-// #ifdef DEBUG_AEC_INPUT
-//     wav_encoder_cfg_t wav_cfg = DEFAULT_WAV_ENCODER_CONFIG();
-//     wav_cfg.task_core = 1;
-//     audio_element_handle_t wav_encoder = wav_encoder_init(&wav_cfg);
-
-//     fatfs_stream_cfg_t fatfs_wd_cfg = FATFS_STREAM_CFG_DEFAULT();
-//     fatfs_wd_cfg.type = AUDIO_STREAM_WRITER;
-//     fatfs_wd_cfg.task_core = 1;
-//     audio_element_handle_t fatfs_stream_writer = fatfs_stream_init(&fatfs_wd_cfg);
-
-//     audio_pipeline_register(recorder, wav_encoder, "wav_enc");
-//     audio_pipeline_register(recorder, fatfs_stream_writer, "fatfs_stream");
-
-//     const char *link_tag[5] = {"i2s", "filter_r", "algo", "wav_enc", "fatfs_stream"};
-//     audio_pipeline_link(recorder, &link_tag[0], 5);
-
-//     audio_element_info_t fat_info = {0};
-//     audio_element_getinfo(fatfs_stream_writer, &fat_info);
-//     fat_info.sample_rates = ALGORITHM_STREAM_DEFAULT_SAMPLE_RATE_HZ;
-//     fat_info.bits = ALGORITHM_STREAM_DEFAULT_SAMPLE_BIT;
-//     fat_info.channels = 2;
-//     audio_element_setinfo(fatfs_stream_writer, &fat_info);
-//     audio_element_set_uri(fatfs_stream_writer, "/sdcard/aec_in.wav");
-// #else
-    rsp_filter_cfg_t rsp_cfg = DEFAULT_RESAMPLE_FILTER_CONFIG();
-    rsp_cfg.src_rate = I2S_SAMPLE_RATE;
-    rsp_cfg.src_ch = 1;
-    rsp_cfg.dest_rate = CODEC_SAMPLE_RATE;
-    rsp_cfg.dest_ch = CODEC_CHANNELS;
-    rsp_cfg.complexity = 5;
-    rsp_cfg.task_core = 1;
-    audio_element_handle_t filter = rsp_filter_init(&rsp_cfg);
-
-    g711_encoder_cfg_t g711_cfg = DEFAULT_G711_ENCODER_CONFIG();
-    g711_cfg.task_core = 1;
-    audio_element_handle_t sip_encoder = g711_encoder_init(&g711_cfg);
-
-    raw_stream_cfg_t raw_cfg = RAW_STREAM_CFG_DEFAULT();
-    raw_cfg.type = AUDIO_STREAM_READER;
-    raw_read = raw_stream_init(&raw_cfg);
-    audio_element_set_output_timeout(raw_read, portMAX_DELAY);
-
-    audio_pipeline_register(recorder, filter, "filter");
-    audio_pipeline_register(recorder, sip_encoder, "sip_enc");
-    audio_pipeline_register(recorder, raw_read, "raw");
-
-    const char *link_tag[6] = {"i2s", "filter_r", "algo", "filter", "sip_enc", "raw"};
-    audio_pipeline_link(recorder, &link_tag[0], 6);
-// #endif
-
-    ESP_LOGI(TAG, " SIP recorder has been created");
-    return ESP_OK;
-}
-
-static esp_err_t player_pipeline_open()
-{
-    audio_element_handle_t i2s_stream_writer;
-    audio_pipeline_cfg_t pipeline_cfg = DEFAULT_AUDIO_PIPELINE_CONFIG();
-    player = audio_pipeline_init(&pipeline_cfg);
-    AUDIO_NULL_CHECK(TAG, player, return ESP_FAIL);
-
-    raw_stream_cfg_t raw_cfg = RAW_STREAM_CFG_DEFAULT();
-    raw_cfg.type = AUDIO_STREAM_WRITER;
-    raw_write = raw_stream_init(&raw_cfg);
-
-    g711_decoder_cfg_t g711_cfg = DEFAULT_G711_DECODER_CONFIG();
-    audio_element_handle_t sip_decoder = g711_decoder_init(&g711_cfg);
-
-    rsp_filter_cfg_t rsp_cfg = DEFAULT_RESAMPLE_FILTER_CONFIG();
-    rsp_cfg.src_rate = CODEC_SAMPLE_RATE;
-    rsp_cfg.src_ch = CODEC_CHANNELS;
-    rsp_cfg.dest_rate = I2S_SAMPLE_RATE;
-    rsp_cfg.dest_ch = I2S_CHANNELS;
-    rsp_cfg.complexity = 5;
-    audio_element_handle_t filter = rsp_filter_init(&rsp_cfg);
-
-    i2s_stream_cfg_t i2s_cfg = I2S_STREAM_CFG_DEFAULT();
-    i2s_cfg.type = AUDIO_STREAM_WRITER;
-    i2s_cfg.uninstall_drv = false;
-    i2s_cfg.i2s_config.sample_rate = I2S_SAMPLE_RATE;
-    i2s_stream_writer = i2s_stream_init(&i2s_cfg);
-
-    audio_pipeline_register(player, raw_write, "raw");
-    audio_pipeline_register(player, sip_decoder, "sip_dec");
-    audio_pipeline_register(player, filter, "filter");
-    audio_pipeline_register(player, i2s_stream_writer, "i2s");
-    const char *link_tag[4] = {"raw", "sip_dec", "filter", "i2s"};
-    audio_pipeline_link(player, &link_tag[0], 4);
-
-    ESP_LOGI(TAG, "SIP player has been created");
-    return ESP_OK;
-}
-
-static ip4_addr_t _get_network_ip()
-{
-    tcpip_adapter_ip_info_t ip;
-    tcpip_adapter_get_ip_info(TCPIP_ADAPTER_IF_STA, &ip);
-    return ip.ip;
-}
-
-static int _sip_event_handler(sip_event_msg_t *event)
-{
-    ip4_addr_t ip;
-    switch ((int)event->type) {
-        case SIP_EVENT_REQUEST_NETWORK_STATUS:
-            ESP_LOGD(TAG, "SIP_EVENT_REQUEST_NETWORK_STATUS");
-            ip = _get_network_ip();
-            if (ip.addr) {
-                return true;
-            }
-            return ESP_OK;
-        case SIP_EVENT_REQUEST_NETWORK_IP:
-            ESP_LOGD(TAG, "SIP_EVENT_REQUEST_NETWORK_IP");
-            ip = _get_network_ip();
-            int ip_len = sprintf((char *)event->data, "%s", ip4addr_ntoa(&ip));
-            return ip_len;
-        case SIP_EVENT_REGISTERED:
-            ESP_LOGI(TAG, "SIP_EVENT_REGISTERED");
-            // audio_player_int_tone_play(tone_uri[TONE_TYPE_SERVER_CONNECT]);
-            break;
-        case SIP_EVENT_RINGING:
-            ESP_LOGI(TAG, "ringing... RemotePhoneNum %s", (char *)event->data);
-            // audio_player_int_tone_play(tone_uri[TONE_TYPE_ALARM]);
-            break;
-        case SIP_EVENT_INVITING:
-            ESP_LOGI(TAG, "SIP_EVENT_INVITING Remote Ring...");
-            break;
-        case SIP_EVENT_ERROR:
-            ESP_LOGI(TAG, "SIP_EVENT_ERROR");
-            break;
-        case SIP_EVENT_HANGUP:
-            ESP_LOGI(TAG, "SIP_EVENT_HANGUP");
-            break;
-        case SIP_EVENT_AUDIO_SESSION_BEGIN:
-            ESP_LOGI(TAG, "SIP_EVENT_AUDIO_SESSION_BEGIN");
-            recorder_pipeline_open();
-            player_pipeline_open();
-            audio_pipeline_run(player);
-            audio_pipeline_run(recorder);
-            break;
-        case SIP_EVENT_AUDIO_SESSION_END:
-            ESP_LOGI(TAG, "SIP_EVENT_AUDIO_SESSION_END");
-            audio_pipeline_stop(player);
-            audio_pipeline_wait_for_stop(player);
-            audio_pipeline_deinit(player);
-            audio_pipeline_stop(recorder);
-            audio_pipeline_wait_for_stop(recorder);
-            audio_pipeline_deinit(recorder);
-            break;
-        case SIP_EVENT_READ_AUDIO_DATA:
-// #ifdef DEBUG_AEC_INPUT
-//             vTaskDelay(20 / portTICK_PERIOD_MS);
-//             return event->data_len;
-// #else
-            return raw_stream_read(raw_read, (char *)event->data, event->data_len);
-// #endif
-        case SIP_EVENT_WRITE_AUDIO_DATA:
-            return raw_stream_write(raw_write, (char *)event->data, event->data_len);
-        case SIP_EVENT_READ_DTMF:
-            ESP_LOGI(TAG, "SIP_EVENT_READ_DTMF ID : %d ", ((char *)event->data)[0]);
-            break;
-    }
-    return 0;
-}
 
 static esp_err_t input_key_service_cb(periph_service_handle_t handle, periph_service_event_t *evt, void *ctx)
 {
-/*    
+    /*
     audio_board_handle_t board_handle = (audio_board_handle_t) ctx;
     int player_volume;
-*/
+    */
+
     if (evt->type == INPUT_KEY_SERVICE_ACTION_CLICK_RELEASE) {
         ESP_LOGD(TAG, "[ * ] input key id is %d", (int)evt->data);
-        sip_state_t sip_state = esp_sip_get_state(sip);
+        sip_state_t sip_state = sip_state_get();                        // = esp_sip_get_state(sip);
         if (sip_state < SIP_STATE_REGISTERED) {
             return ESP_OK;
         }
@@ -300,9 +100,6 @@ static esp_err_t input_key_service_cb(periph_service_handle_t handle, periph_ser
                     mute = true;
                     // display_service_set_pattern(disp, DISPLAY_PATTERN_TURN_ON, 0);
                 }
-// #if defined CONFIG_ESP_LYRAT_MINI_V1_1_BOARD
-//                 audio_hal_set_mute(board_handle->adc_hal, mute);
-// #endif                
                 break;
 /*                
             case INPUT_KEY_USER_ID_PLAY:
@@ -320,9 +117,9 @@ static esp_err_t input_key_service_cb(periph_service_handle_t handle, periph_ser
                 ESP_LOGI(TAG, "[ * ] [Mode] input key event (RecBtn)");
                 if (sip_state == SIP_STATE_RINGING) {
                     // audio_player_int_tone_stop();
-                    esp_sip_uas_answer(sip, true);
+//                    esp_sip_uas_answer(sip, true);
                 } else if (sip_state == SIP_STATE_REGISTERED) {
-                    esp_sip_uac_invite(sip, "101");
+//                    esp_sip_uac_invite(sip, "101");
                 }
                 break;
 /*
@@ -362,7 +159,7 @@ static esp_err_t input_key_service_cb(periph_service_handle_t handle, periph_ser
         switch ((int)evt->data) {
             case INPUT_KEY_USER_ID_SET:
                 is_smart_config = true;
-                esp_sip_destroy(sip);
+//                esp_sip_destroy(sip);
                 // wifi_service_setting_start(wifi_serv, 0);
 
                 // audio_player_int_tone_play(tone_uri[TONE_TYPE_UNDER_SMARTCONFIG]);
@@ -408,11 +205,6 @@ void app_main()
 
     ESP_LOGI(TAG, "[1.1] Initialize and start peripherals");
     audio_board_key_init(set);                                                      // инициализация кнопок управления (REC BTN & MODE BTN ++ TOUCH_PAD_SELх)
-    
-// #ifdef DEBUG_AEC_INPUT
-//     audio_board_sdcard_init(set, SD_MODE_1_LINE);
-// #endif
-
 
     ESP_LOGI(TAG, "[1.2] Create and start input key service");
     input_key_service_info_t input_key_info[] = INPUT_KEY_DEFAULT_INFO();           //  передается перечень кнопок управления
@@ -464,8 +256,6 @@ void app_main()
 
     //  test();
 
-    //  udp://1004:1234@10.10.34.9:5060
-    //  udp://1005:1234@sip.intercom.host:7060
 
 
 

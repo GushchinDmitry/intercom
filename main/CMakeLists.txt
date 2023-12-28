@@ -3,6 +3,7 @@ set (COMPONENT_SRCS
         "icom_led.c"
         "icom_ctrl.c"
         "icom_wifi.c"
+        "icom_voip.c"
         "test.c"
     )
 
