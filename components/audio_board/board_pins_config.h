@@ -97,22 +97,6 @@ esp_err_t i2s_mclk_gpio_select(i2s_port_t i2s_num, gpio_num_t gpio_num);
 int8_t get_sdcard_open_file_num_max(void);
 
 /**
- * @brief  Get the gpio number for auxin detection
- *
- * @return  -1      non-existent
- *          Others  gpio number
- */
-// int8_t get_auxin_detect_gpio(void);
-
-/**
- * @brief  Get the gpio number for headphone detection
- *
- * @return  -1      non-existent
- *          Others  gpio number
- */
-// int8_t get_headphone_detect_gpio(void);
-
-/**
  * @brief  Get the gpio number for PA enable
  *
  * @return  -1      non-existent
@@ -120,13 +104,6 @@ int8_t get_sdcard_open_file_num_max(void);
  */
 int8_t get_pa_enable_gpio(void);
 
-/**
- * @brief  Get the gpio number for adc detection
- *
- * @return  -1      non-existent
- *          Others  gpio number
- */
-// int8_t get_adc_detect_gpio(void);
 
 
 

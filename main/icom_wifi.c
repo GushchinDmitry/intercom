@@ -39,37 +39,23 @@ static esp_err_t wifi_service_cb(periph_service_handle_t handle, periph_service_
     {
         //  LED индикация подключения WiFi
         ESP_LOGI(TAG, "Icom connected to WiFi");
-        // display_service_set_pattern(disp_led_WiFi, DISPLAY_PATTERN_TURN_ON, 0);
         icom_led_WiFi_On();
 
     
         //  Запуск SIP сервиса
         ESP_LOGI(TAG, "PERIPH_WIFI_CONNECTED [%d]", __LINE__);
         is_smart_config = false;
-#if 0
+
+#if 1
         ESP_LOGI(TAG, "[ 5 ] Create SIP Service");
         sip_service_create();
-/*        
-        sip_config_t sip_cfg = {
-            .uri = CONFIG_SIP_URI,
-            .event_handler = _sip_event_handler,
-            .send_options = true,
-    #ifdef CONFIG_SIP_CODEC_G711A
-            .acodec_type = SIP_ACODEC_G711A,
-    #else
-            .acodec_type = SIP_ACODEC_G711U,
-    #endif
-        };
-        sip = esp_sip_init(&sip_cfg);
-        esp_sip_start(sip);
-*/
 #endif
+
     } 
     else if (evt->type == WIFI_SERV_EVENT_DISCONNECTED) 
     {
         //  LED индикация подключения WiFi
         ESP_LOGI(TAG, "Icom NOT connected to WiFi");
-        // display_service_set_pattern(disp_led_WiFi, DISPLAY_PATTERN_TURN_OFF, 0);
         icom_led_WiFi_Off();
 
         ESP_LOGI(TAG, "PERIPH_WIFI_DISCONNECTED [%d]", __LINE__);
@@ -81,7 +67,6 @@ static esp_err_t wifi_service_cb(periph_service_handle_t handle, periph_service_
     {
         //  LED индикация подключения WiFi
         ESP_LOGI(TAG, "Icom connected OR NOT connected to WiFi    >>>>    Check problem !!!");
-        // display_service_set_pattern(disp_led_WiFi, DISPLAY_PATTERN_TURN_OFF, 0);
         icom_led_WiFi_Off();
 
         ESP_LOGW(TAG, "WIFI_SERV_EVENT_SETTING_TIMEOUT [%d]", __LINE__);
@@ -140,6 +125,7 @@ void setup_wifi()
     ESP_LOGI(TAG, "WiFi ap.ssid = %s", sta_cfg.ap.ssid);
     ESP_LOGI(TAG, "WiFi ap.pass = %s", sta_cfg.ap.password);
     ESP_LOGI(TAG, " ");
+
 
         // if (wifi_ssid_manager_get_latest_config(serv->ssid_manager, &wifi_cfg) != ESP_OK) {
 

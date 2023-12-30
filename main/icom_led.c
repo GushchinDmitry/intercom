@@ -126,3 +126,12 @@ void icom_led_WiFi_Off()
 {
     display_service_set_pattern(disp_led_WiFi, DISPLAY_PATTERN_TURN_OFF, 0);
 }
+
+
+/**
+ * @brief WiFi LED Toggle
+ */
+void icom_led_WiFi_Toggle()
+{
+    display_service_set_pattern(disp_led_WiFi, DISPLAY_PATTERN_WIFI_SETTING, 0);
+}

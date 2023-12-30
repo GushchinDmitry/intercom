@@ -34,14 +34,12 @@
  */
 // #define FUNC_SDCARD_EN            (0)
 #define SDCARD_OPEN_FILE_NUM_MAX  5
-// #define SDCARD_INTR_GPIO          GPIO_NUM_34
 
 
 /**
  * @brief Audio Codec Chip Function Definition
  */
 #define FUNC_AUDIO_CODEC_EN       (1)
-// #define AUXIN_DETECT_GPIO         GPIO_NUM_12
 #define PA_ENABLE_GPIO            GPIO_NUM_21
 #define CODEC_ADC_I2S_PORT        (0)
 #define CODEC_ADC_BITS_PER_SAMPLE I2S_BITS_PER_SAMPLE_16BIT

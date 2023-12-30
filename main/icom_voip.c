@@ -181,6 +181,9 @@ static ip4_addr_t _get_network_ip()
 static int _sip_event_handler(sip_event_msg_t *event)
 {
     ip4_addr_t ip;
+
+    ESP_LOGI(TAG, "Called the SIP event handler");
+
     switch ((int)event->type) {
         case SIP_EVENT_REQUEST_NETWORK_STATUS:
             ESP_LOGD(TAG, "SIP_EVENT_REQUEST_NETWORK_STATUS");

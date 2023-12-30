@@ -29,6 +29,7 @@ void icom_led_OPEN_reset(void);
 void icom_led_WiFi_init();
 void icom_led_WiFi_On();
 void icom_led_WiFi_Off();
+void icom_led_WiFi_Toggle();
 
 
 #ifdef __cplusplus

@@ -125,18 +125,6 @@ int8_t get_sdcard_open_file_num_max(void)
 
 
 // input-output pins
-/*
-int8_t get_auxin_detect_gpio(void)
-{
-    return AUXIN_DETECT_GPIO;
-}
-*/
-/*
-int8_t get_headphone_detect_gpio(void)
-{
-    return HEADPHONE_DETECT;
-}
-*/
 
 int8_t get_pa_enable_gpio(void)
 {
