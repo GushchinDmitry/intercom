@@ -29,7 +29,7 @@
 #include "periph_sdcard.h"
 #include "led_indicator.h"
 // #include "periph_touch.h"
-#include "periph_button.h"
+// #include "periph_button.h"
 
 static const char *TAG = "BOARD";
 
@@ -51,26 +51,12 @@ audio_board_handle_t audio_board_init(void)
 audio_hal_handle_t audio_board_codec_init(void)
 {
     audio_hal_codec_config_t audio_codec_cfg = AUDIO_CODEC_DEFAULT_CONFIG();
+    
     //     !!!!!     ES8374     !!!!!
     audio_hal_handle_t codec_hal = audio_hal_init(&audio_codec_cfg, &AUDIO_CODEC_ES8374_DEFAULT_HANDLE);
 
     AUDIO_NULL_CHECK(TAG, codec_hal, return NULL);
     return codec_hal;
-}
-
-esp_err_t audio_board_key_init(esp_periph_set_handle_t set)
-{
-    periph_button_cfg_t btn_cfg = {
-        .gpio_mask = (1ULL << get_input_rec_id()) | (1ULL << get_input_mode_id()), //REC BTN & MODE BTN
-    };
-    esp_periph_handle_t button_handle = periph_button_init(&btn_cfg);
-    AUDIO_NULL_CHECK(TAG, button_handle, return ESP_ERR_ADF_MEMORY_LACK);
-    esp_err_t ret = ESP_OK;
-    ret = esp_periph_start(set, button_handle);
-    if (ret != ESP_OK) {
-        return ret;
-    }
-    return ret;
 }
 
 audio_board_handle_t audio_board_get_handle(void)

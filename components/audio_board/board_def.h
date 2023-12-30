@@ -25,7 +25,9 @@
 #ifndef _AUDIO_BOARD_DEFINITION_H_
 #define _AUDIO_BOARD_DEFINITION_H_
 
-// #include "driver/touch_pad.h"
+
+#include "audio_hal.h"
+
 
 /**
  * @brief SDCARD Function Definition
@@ -36,20 +38,10 @@
 
 
 /**
- * @brief LED Function Definition
- */
-/*
-#define FUNC_SYS_LEN_EN           (0)
-#define GREEN_LED_GPIO            GPIO_NUM_22
-*/
-
-
-/**
  * @brief Audio Codec Chip Function Definition
  */
 #define FUNC_AUDIO_CODEC_EN       (1)
-#define AUXIN_DETECT_GPIO         GPIO_NUM_12
-//  #define HEADPHONE_DETECT          GPIO_NUM_19
+// #define AUXIN_DETECT_GPIO         GPIO_NUM_12
 #define PA_ENABLE_GPIO            GPIO_NUM_21
 #define CODEC_ADC_I2S_PORT        (0)
 #define CODEC_ADC_BITS_PER_SAMPLE I2S_BITS_PER_SAMPLE_16BIT
@@ -57,20 +49,6 @@
 #define RECORD_HARDWARE_AEC       (false)
 #define BOARD_PA_GAIN             (10) /* Power amplifier gain defined by board (dB) */
 
-/*
-extern audio_hal_func_t AUDIO_CODEC_ES8388_DEFAULT_HANDLE;
-#define AUDIO_CODEC_DEFAULT_CONFIG(){                   \
-        .adc_input  = AUDIO_HAL_ADC_INPUT_LINE1,        \
-        .dac_output = AUDIO_HAL_DAC_OUTPUT_ALL,         \
-        .codec_mode = AUDIO_HAL_CODEC_MODE_BOTH,        \
-        .i2s_iface = {                                  \
-            .mode = AUDIO_HAL_MODE_SLAVE,               \
-            .fmt = AUDIO_HAL_I2S_NORMAL,                \
-            .samples = AUDIO_HAL_48K_SAMPLES,           \
-            .bits = AUDIO_HAL_BIT_LENGTH_16BITS,        \
-        },                                              \
-};
-*/
 
 //     !!!!!     ES8374     !!!!!
 
@@ -86,29 +64,6 @@ extern audio_hal_func_t AUDIO_CODEC_ES8374_DEFAULT_HANDLE;
             .bits = AUDIO_HAL_BIT_LENGTH_16BITS,        \
         },                                              \
 };
-
-
-/**
- * @brief Button Function Definition
- */
-
-#define FUNC_BUTTON_EN            (1)
-#define INPUT_KEY_NUM             2
-#define BUTTON_REC_ID             GPIO_NUM_36
-#define BUTTON_MODE_ID            GPIO_NUM_39
-
-#define INPUT_KEY_DEFAULT_INFO() {                      \
-    {                                                   \
-        .type = PERIPH_ID_BUTTON,                       \
-        .user_id = INPUT_KEY_USER_ID_REC,               \
-        .act_id = BUTTON_REC_ID,                        \
-    },                                                  \
-    {                                                   \
-        .type = PERIPH_ID_BUTTON,                       \
-        .user_id = INPUT_KEY_USER_ID_MODE,              \
-        .act_id = BUTTON_MODE_ID,                       \
-    }                                                   \
-}
 
 
 #endif

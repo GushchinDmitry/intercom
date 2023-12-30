@@ -41,6 +41,7 @@
 #include "esp_netif.h"
 
 
+#include "icom_pins.h"
 #include "icom_led.h"
 #include "icom_ctrl.h"
 #include "icom_wifi.h"

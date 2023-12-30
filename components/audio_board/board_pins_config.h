@@ -87,13 +87,6 @@ esp_err_t get_spi_pins(spi_bus_config_t *spi_config, spi_device_interface_config
  */
 esp_err_t i2s_mclk_gpio_select(i2s_port_t i2s_num, gpio_num_t gpio_num);
 
-/**
- * @brief  Get the gpio number for sdcard interrupt
- *
- * @return  -1      non-existent
- *          Others  sdcard interrupt gpio number
- */
-//  int8_t get_sdcard_intr_gpio(void);
 
 /**
  * @brief  Get sdcard maximum number of open files
@@ -109,7 +102,7 @@ int8_t get_sdcard_open_file_num_max(void);
  * @return  -1      non-existent
  *          Others  gpio number
  */
-int8_t get_auxin_detect_gpio(void);
+// int8_t get_auxin_detect_gpio(void);
 
 /**
  * @brief  Get the gpio number for headphone detection
@@ -133,7 +126,10 @@ int8_t get_pa_enable_gpio(void);
  * @return  -1      non-existent
  *          Others  gpio number
  */
-int8_t get_adc_detect_gpio(void);
+// int8_t get_adc_detect_gpio(void);
+
+
+
 
 /**
  * @brief  Get the mclk gpio number of es7243
@@ -142,26 +138,6 @@ int8_t get_adc_detect_gpio(void);
  *          Others  gpio number
  */
 int8_t get_es7243_mclk_gpio(void);
-
-/**
- * @brief  Get the record-button id for adc-button
- *
- * @return  -1      non-existent
- *          Others  button id
- */
-int8_t get_input_rec_id(void);
-
-/**
- * @brief  Get the number for mode-button
- *
- * @return  -1      non-existent
- *          Others  number
- */
-int8_t get_input_mode_id(void);
-
-
-
-
 
 /**
  * @brief Get DSP reset gpio number

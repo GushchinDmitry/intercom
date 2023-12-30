@@ -29,8 +29,8 @@
 #include "board_def.h"
 #include "board_pins_config.h"
 #include "esp_peripherals.h"
-#include "display_service.h"
-#include "periph_sdcard.h"
+//#include "display_service.h"
+//#include "periph_sdcard.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -58,19 +58,6 @@ audio_board_handle_t audio_board_init(void);
  * @return The audio hal handle
  */
 audio_hal_handle_t audio_board_codec_init(void);
-
-
-/**
- * @brief Initialize key peripheral
- *
- * @param set The handle of esp_periph_set_handle_t
- *
- * @return
- *     - ESP_OK, success
- *     - Others, fail
- */
-esp_err_t audio_board_key_init(esp_periph_set_handle_t set);
-
 
 /**
  * @brief Query audio_board_handle
